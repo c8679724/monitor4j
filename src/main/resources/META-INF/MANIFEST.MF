@@ -3,12 +3,12 @@ Implementation-Title: eagle-agent
 Implementation-Version: 1.0.6
 Built-By: root
 Created-By: Apache Maven 3.3.9
-Premain-Class: monitor.agent.Agent
-Agent-Class: monitor.agent.Agent
+Premain-Class: com.sky.profiler4j.agent.Agent
+Agent-Class: com.sky.profiler4j.agent.Agent
 Implementation-Vendor-Id: com.sky
 Can-Redefine-Classes: true
 Can-Retransform-Classes: true
-Main-Class: monitor.agent.Agent
+Main-Class: com.sky.profiler4j.agent.Agent
 Archiver-Version: Plexus Archiver
 Agent-Version: 1.0.0
 Build-Jdk: 1.8.3_45

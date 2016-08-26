@@ -113,7 +113,7 @@ public class ThreadMethodStack {
 			s.append("--");
 		}
 		System.out.println(s + MethodUtil.getMethodName(threadMethodStack.getMethod_id()) + "---"
-				+ (threadMethodStack.getEnd_time() - threadMethodStack.getStart_time()));
+				+ (threadMethodStack.getEnd_time() - threadMethodStack.getStart_time()) + "ns");
 
 		LinkedList<ThreadMethodStack> childrenMethods = threadMethodStack.getChildrenMethods();
 		if (childrenMethods != null && threadMethodStack.getChildrenMethods().size() > 0) {

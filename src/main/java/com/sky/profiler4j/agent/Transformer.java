@@ -6,10 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
+import java.nio.file.Path;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -36,28 +38,21 @@ public class Transformer implements ClassFileTransformer {
 				// 开始转换类的字节码
 				ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 				CustomClassVisitor customClassVisitor = new CustomClassVisitor(Opcodes.ASM5, classWriter, className);
-				classReader.accept(customClassVisitor, 0);
+				classReader.accept(customClassVisitor, ClassReader.EXPAND_FRAMES);
 				byte[] classfileBuffer_ = classWriter.toByteArray();
 
 				// 记录已经转换过的类，避免重复转换
 				Transformer.addTransform_after_Classese(className);
-				if (className.equals("test/service/PVUVServiceImpl")) {
-
-					File file = new File("h:/test/asm/PVUVServiceImpl.class");
-					FileOutputStream fout;
-					try {
-						fout = new FileOutputStream(file);
-						fout.write(classfileBuffer_);
-						fout.close();
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
 				return classfileBuffer_;
 			} catch (Exception e) {
 				e.printStackTrace();
+
+				File file = new File("h:/test/asm/" + className + ".class");
+				try {
+					FileUtils.writeByteArrayToFile(file, classfileBuffer);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 				return classfileBuffer;
 			}
 		} else {
