@@ -14,6 +14,17 @@ import sun.jvmstat.monitor.VmIdentifier;
 
 public class AttachUtil {
 
+	/**
+	 * 
+	 * 获取本机正在运行的java进程. <br>
+	 * 
+	 * @return
+	 * @throws MonitorException
+	 * @throws URISyntaxException
+	 * @return List<MonitoredVm>
+	 * @author sky
+	 * @date 2016年8月26日 下午3:21:56
+	 */
 	public static List<MonitoredVm> listLocalVM() throws MonitorException, URISyntaxException {
 		List<MonitoredVm> monitoredVms = new ArrayList<>();
 
