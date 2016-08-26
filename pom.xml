@@ -6,6 +6,7 @@
 	<artifactId>monitor4j</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
+	<description>目前项目处于原型建设阶段</description>
 
 	<name>monitor4j</name>
 	<url>https://github.com/c8679724/monitor4j</url>
