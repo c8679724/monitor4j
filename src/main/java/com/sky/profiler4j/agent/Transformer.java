@@ -46,13 +46,14 @@ public class Transformer implements ClassFileTransformer {
 				return classfileBuffer_;
 			} catch (Exception e) {
 				e.printStackTrace();
-
+				// 保存字节码，看看到底什么情况
 				File file = new File("h:/test/asm/" + className + ".class");
 				try {
 					FileUtils.writeByteArrayToFile(file, classfileBuffer);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+
 				return classfileBuffer;
 			}
 		} else {
