@@ -10,6 +10,7 @@ public class App3 {
 	public static void test() {
 		System.out.println("test");
 		new App3().test1();
+		new App3().test2();
 	}
 
 	public void test1() {
