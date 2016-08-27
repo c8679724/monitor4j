@@ -25,5 +25,4 @@ public class Test_App3 extends ClassLoader {
 		Class<?> testClass = (Class<App3>) loader.defineClass(null, code, 0, code.length);
 		testClass.getMethods()[1].invoke(testClass.newInstance(), new Object[] {});
 	}
-
 }
