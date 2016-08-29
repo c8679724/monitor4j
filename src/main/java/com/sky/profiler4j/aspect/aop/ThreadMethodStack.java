@@ -34,11 +34,6 @@ public class ThreadMethodStack {
 
 	private long end_time;
 
-	/**
-	 * 深度。使用的时候再计算
-	 */
-	private int depth;
-
 	private ThreadMethodStack fatherMethod;
 
 	private LinkedList<ThreadMethodStack> childrenMethods;
@@ -81,14 +76,6 @@ public class ThreadMethodStack {
 
 	public void setEnd_time(long end_time) {
 		this.end_time = end_time;
-	}
-
-	public int getDepth() {
-		return depth;
-	}
-
-	public void setDepth(int depth) {
-		this.depth = depth;
 	}
 
 	public ThreadMethodStack getFatherMethod() {
