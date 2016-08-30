@@ -4,9 +4,13 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AdviceAdapter;
 
+import com.sky.profiler4j.agent.profile.threadStack.ThreadProfiler;
+
 public class CustomMethodAdviceAdapter extends AdviceAdapter {
 
 	private int method_id;
+
+	private static final String threadProfilerClassName = ThreadProfiler.class.getName().replaceAll("\\.", "/");
 
 	public CustomMethodAdviceAdapter(int api, MethodVisitor mv, int access, String name, String desc, int method_id) {
 		super(api, mv, access, name, desc);
@@ -34,8 +38,7 @@ public class CustomMethodAdviceAdapter extends AdviceAdapter {
 
 		// threadMethod
 		mv.visitLdcInsn(new Integer(method_id));
-		mv.visitMethodInsn(INVOKESTATIC, "com/sky/profiler4j/agent/profile/threadStack/ThreadProfiler", "enterMethod",
-				"(I)V", false);
+		mv.visitMethodInsn(INVOKESTATIC, threadProfilerClassName, "enterMethod", "(I)V", false);
 
 		// http
 
@@ -50,8 +53,7 @@ public class CustomMethodAdviceAdapter extends AdviceAdapter {
 	protected void onMethodExit(int opcode) {
 
 		mv.visitLdcInsn(new Integer(method_id));
-		mv.visitMethodInsn(INVOKESTATIC, "com/sky/profiler4j/agent/profile/threadStack/ThreadProfiler", "exitMethod",
-				"(I)V", false);
+		mv.visitMethodInsn(INVOKESTATIC, threadProfilerClassName, "exitMethod", "(I)V", false);
 
 		// http
 
@@ -70,4 +72,5 @@ public class CustomMethodAdviceAdapter extends AdviceAdapter {
 			super.visitMaxs(maxStack + 1, maxLocals + 3);
 		}
 	}
+
 }
