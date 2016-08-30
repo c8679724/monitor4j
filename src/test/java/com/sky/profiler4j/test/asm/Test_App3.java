@@ -6,7 +6,12 @@ import org.objectweb.asm.Opcodes;
 
 import com.sky.profiler4j.agent.aspect.asm.CustomClassVisitor;
 
-
+/**
+ * 进一步的原型
+ * 
+ * @author sky
+ *
+ */
 public class Test_App3 extends ClassLoader {
 
 	public static void main(String[] args) throws Exception {
