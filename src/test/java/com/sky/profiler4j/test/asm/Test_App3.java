@@ -4,7 +4,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
-import com.sky.profiler4j.agent.aspect.asm.threadMethod.CustomClassVisitor;
+import com.sky.profiler4j.agent.aspect.asm.CustomClassVisitor;
 
 
 public class Test_App3 extends ClassLoader {

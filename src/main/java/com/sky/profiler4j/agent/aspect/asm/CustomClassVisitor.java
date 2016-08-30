@@ -1,4 +1,4 @@
-package com.sky.profiler4j.agent.aspect.asm.threadMethod;
+package com.sky.profiler4j.agent.aspect.asm;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
