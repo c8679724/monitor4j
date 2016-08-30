@@ -31,15 +31,35 @@ public class CustomMethodAdviceAdapter extends AdviceAdapter {
 	@Override
 	protected void onMethodEnter() {
 		// super.visitCode();
+
+		// threadMethod
 		mv.visitLdcInsn(new Integer(method_id));
-		mv.visitMethodInsn(INVOKESTATIC, "com/sky/profiler4j/aspect/aop/ThreadProfiler", "enterMethod", "(I)V", false);
+		mv.visitMethodInsn(INVOKESTATIC, "com/sky/profiler4j/agent/profile/threadStack/ThreadProfiler", "enterMethod",
+				"(I)V", false);
+
+		// http
+
+		// sql
+
+		// webservice
+
+		//
 	}
 
 	@Override
 	protected void onMethodExit(int opcode) {
 
 		mv.visitLdcInsn(new Integer(method_id));
-		mv.visitMethodInsn(INVOKESTATIC, "com/sky/profiler4j/aspect/aop/ThreadProfiler", "exitMethod", "(I)V", false);
+		mv.visitMethodInsn(INVOKESTATIC, "com/sky/profiler4j/agent/profile/threadStack/ThreadProfiler", "exitMethod",
+				"(I)V", false);
+
+		// http
+
+		// sql
+
+		// webservice
+
+		//
 	}
 
 	@Override

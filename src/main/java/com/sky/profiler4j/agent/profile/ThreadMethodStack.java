@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import com.sky.profiler4j.agent.profile.util.MethodUtil;
 
 /**
- * 运行时方法 </br>
+ * 线程方法访问树 </br>
  * 原则上为减少内存消耗，运行时方法不存储方法名、方法参数类型、方法返回值类型。需要通过方法id去获取这些元素 </br>
  * 后面需要添加后台静默生产该类型的对象的过程，产用克隆 </br>
  * Method对象产用ehcache存储，后台静默计算是否只做统计还是需要上传到数据库
@@ -30,6 +30,8 @@ public class ThreadMethodStack {
 	 */
 	private int method_id;
 
+	private boolean isException;
+
 	private long start_time;
 
 	private long end_time;
@@ -52,6 +54,14 @@ public class ThreadMethodStack {
 
 	public void setMethod_id(int method_id) {
 		this.method_id = method_id;
+	}
+
+	public boolean isException() {
+		return isException;
+	}
+
+	public void setException(boolean isException) {
+		this.isException = isException;
 	}
 
 	public long getStart_time() {

@@ -1,7 +1,8 @@
-package com.sky.profiler4j.agent.profile.threadMethod;
+package com.sky.profiler4j.agent.profile.threadStack;
 
 import java.util.LinkedList;
 
+import com.sky.profiler4j.Application;
 import com.sky.profiler4j.agent.profile.ThreadMethodStack;
 import com.sky.profiler4j.agent.profile.ThreadValue;
 
@@ -46,11 +47,10 @@ public class ThreadProfiler {
 		ThreadMethodStack methodTree = ThreadValue.methodTree.get();
 		// 如果树根是自己
 		if (methodTree.equals(thisMethod_)) {
+			
 			// 异步结算根方法，结算后内存中不再存储根方法
-			System.out.println("--------count----------");
-			System.out.println("------------------");
-			ThreadMethodStack.count(thisMethod_, 0);
-
+			Application.threadMethodStacks.add(thisMethod_);
+			
 			// 直到只剩下根节点，消除线程中的方法树和拷贝的方法树
 			ThreadValue.methodTree_Copy = null;
 			ThreadValue.fatherMethod.set(null);

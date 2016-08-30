@@ -3,8 +3,10 @@ package com.sky.profiler4j.agent;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 
+import com.sky.profiler4j.Application;
 import com.sky.profiler4j.agent.util.ClassesChoose;
 import com.sky.profiler4j.agent.util.PropertiesUtil;
+import com.sky.profiler4j.transmit.client.AgentClient;
 
 /**
  * agent 入口
@@ -65,6 +67,14 @@ public class Agent {
 				e.printStackTrace();
 			}
 		}
+
+		// 启动agent里的rmi服务，提供外部调用
+		AgentClient.startRmiService("localhost", 8888);
+
+		// 启动agent里的异步引擎，执行一些异步任务
+		Application.async();
+
+		System.out.println("complete start agent.........");
 	}
 
 	public long getObjectSize(Object objectToSize) {
