@@ -1,8 +1,8 @@
-package com.sky.profiler4j.aspect.aop;
+package com.sky.profiler4j.agent.profile;
 
 import java.util.LinkedList;
 
-import com.sky.profiler4j.aspect.util.MethodUtil;
+import com.sky.profiler4j.agent.profile.util.MethodUtil;
 
 /**
  * 运行时方法 </br>

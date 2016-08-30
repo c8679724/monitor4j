@@ -1,7 +1,7 @@
 package com.sky.profiler4j.test.asm;
 
-import com.sky.profiler4j.aspect.aop.ThreadProfiler;
-import com.sky.profiler4j.aspect.util.MethodUtil;
+import com.sky.profiler4j.agent.profile.threadMethod.ThreadProfiler;
+import com.sky.profiler4j.agent.profile.util.MethodUtil;
 
 public class Test {
 
