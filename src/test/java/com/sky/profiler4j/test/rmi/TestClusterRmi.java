@@ -4,40 +4,40 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-import com.sky.profiler4j.transmit.cluster.ClusterMain;
-import com.sky.profiler4j.transmit.service.TransmitService;
+import com.sky.profiler4j.transport.cluster.ClusterMain;
+import com.sky.profiler4j.transport.service.TransportService;
 
 public class TestClusterRmi {
 
 	public static void main(String[] args) {
 
-		TransmitService transmitService = null;
+		TransportService transportService = null;
 		try {
-			transmitService = ClusterMain.getRmiService();
+			transportService = ClusterMain.getRmiService();
 		} catch (MalformedURLException | RemoteException | NotBoundException e1) {
 			e1.printStackTrace();
 		}
 
 		// 测试多线程
 		for (int i = 0; i < 10000; i++) {
-			new Thread(new TestRunnable(transmitService, i)).start();
+			new Thread(new TestRunnable(transportService, i)).start();
 		}
 	}
 }
 
 class TestRunnable implements Runnable {
 
-	private TransmitService transmitService;
+	private TransportService transportService;
 	private int index;
 
-	public TestRunnable(TransmitService transmitService, int index) {
-		this.transmitService = transmitService;
+	public TestRunnable(TransportService transportService, int index) {
+		this.transportService = transportService;
 		this.index = index;
 	}
 
 	public void run() {
 		try {
-			System.out.println(transmitService.test("Test" + index));
+			System.out.println(transportService.test("Test" + index));
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

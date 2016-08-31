@@ -4,11 +4,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sky.profiler4j.agent.profile.AppMethodStack;
 import com.sky.profiler4j.agent.profile.ThreadMethodStack;
 import com.sky.profiler4j.agent.profile.util.MinuteTime;
 
 public class Application {
+
+	public static long agent_start_time = 0;
+
+	public static final Gson gson = new GsonBuilder().create();
 
 	/**
 	 * 应用标志,每个jvm的每次重启都算一个应用，数据入库的时候thread、method的主键需要拼接上applicationFlag
@@ -61,26 +67,29 @@ public class Application {
 				public void run() {
 					while (true) {
 
-						if (threadMethodStacks.size() > 0) {
-							for (int i = 0; i < threadMethodStacks.size(); i++) {
-								appStackRoot = AppMethodStack.merge(appStackRoot, threadMethodStacks.remove(i));
-							}
-						}
-
-						System.out.println("------定时打印appStack");
-						AppMethodStack.print(AppMethodStack.sort(appStackRoot), 0);
-
 						try {
 							Thread.sleep(1000 * 30);
 						} catch (InterruptedException e) {
 
 						}
+
+						int threadMethodStacksSize = threadMethodStacks.size();
+						if (threadMethodStacksSize > 0) {
+							for (int i = 0; i < threadMethodStacksSize; i++) {
+								appStackRoot = AppMethodStack.merge(appStackRoot, threadMethodStacks.removeFirst());
+							}
+						}
+
+						// 排序，排序的作用不只是为了好看，还是为了寻找节点的时候速度更快，概率大的会放到前面，减少搜索次数
+						appStackRoot = AppMethodStack.sort(appStackRoot, 1, 0);
+
+						System.out.println("------定时打印appStack");
+						AppMethodStack.print(appStackRoot, 0);
 					}
 				}
-			}, "asyncMergeThreadMethodStackTask").start();
+			}, "asyncMergeThreadStackTask").start();
 		} catch (Exception e) {
 
 		}
-
 	}
 }

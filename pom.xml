@@ -28,6 +28,12 @@
 
 	<dependencies>
 
+		<dependency>
+			<groupId>test.sky</groupId>
+			<artifactId>transport</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 		<!-- asm -->
 		<dependency>
 			<groupId>org.ow2.asm</groupId>

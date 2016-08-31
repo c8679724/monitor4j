@@ -1,7 +1,10 @@
 package com.sky.profiler4j.agent.profile;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
+import com.sky.profiler4j.Application;
 import com.sky.profiler4j.agent.profile.util.MethodUtil;
 
 /**
@@ -52,7 +55,7 @@ public class AppMethodStack {
 	/**
 	 * 子节点
 	 */
-	private LinkedList<AppMethodStack> childrenMethodStack;
+	private List<AppMethodStack> childrenStack;
 
 	public String getMethodName() {
 		return methodName;
@@ -86,12 +89,12 @@ public class AppMethodStack {
 		this.exceptionCount = exceptionCount;
 	}
 
-	public LinkedList<AppMethodStack> getChildrenMethodStack() {
-		return childrenMethodStack;
+	public List<AppMethodStack> getChildrenStack() {
+		return childrenStack;
 	}
 
-	public void setChildrenMethodStack(LinkedList<AppMethodStack> childrenMethodStack) {
-		this.childrenMethodStack = childrenMethodStack;
+	public void setChildrenStack(List<AppMethodStack> childrenStack) {
+		this.childrenStack = childrenStack;
 	}
 
 	/**
@@ -107,64 +110,75 @@ public class AppMethodStack {
 			methodTree = getTreeRoot();
 		}
 
-		LinkedList<AppMethodStack> childrenMethodStack = methodTree.getChildrenMethodStack();
-		AppMethodStack childMethodStack = null;
-		int index = -1;
+		List<AppMethodStack> childrenStack = methodTree.getChildrenStack();
 		String methodName = MethodUtil.getMethodName(threadMethodStack.getMethod_id());
-		if (childrenMethodStack == null || childrenMethodStack.size() == 0) {// 应用方法访问树是否存在子节点，不存在新建一个
-			if (childrenMethodStack == null) {
-				childrenMethodStack = new LinkedList<AppMethodStack>();
+		AppMethodStack childStack = null;
+		int index = -1;
+
+		if (childrenStack == null || childrenStack.size() == 0) {// 应用方法访问树是否存在子节点，不存在新建一个
+			if (childrenStack == null) {
+				childrenStack = new ArrayList<AppMethodStack>();
 			}
-			childMethodStack = new AppMethodStack();
-			childMethodStack.setMethodName(methodName);
+			childStack = new AppMethodStack();
+			childStack.setMethodName(methodName);
 		} else {
 			boolean found = false;
-			for (int i = 0; i < childrenMethodStack.size(); i++) {
+			AppMethodStack bak;
+			int childrenMethodStackSize = childrenStack.size();
+			for (int i = 0; i < childrenMethodStackSize; i++) {
+				bak = childrenStack.get(i);
 				// 如果找到相同的节点了
-				if (childrenMethodStack.get(i).getMethodName().equals(methodName)) {
-					childMethodStack = childrenMethodStack.get(i);
+				if (bak.getMethodName().equals(methodName)) {
+					childStack = bak;
 					index = i;
 					found = true;
 					break;
 				}
 			}
+
 			// 如果没有在方法访问树种找到要合并的方法节点，那么添加进去
 			if (!found) {
-				childMethodStack = new AppMethodStack();
-				childMethodStack.setMethodName(methodName);
+				childStack = new AppMethodStack();
+				childStack.setMethodName(methodName);
 			}
 		}
 
-		childMethodStack.setCount(childMethodStack.getCount() + 1);
-		childMethodStack.setSum_time(
-				childMethodStack.getSum_time() + (threadMethodStack.getEnd_time() - threadMethodStack.getStart_time()));
+		childStack.setCount(childStack.getCount() + 1);
+		childStack.setSum_time(
+				childStack.getSum_time() + (threadMethodStack.getEnd_time() - threadMethodStack.getStart_time()));
 
 		// 接下来通过递归处理方法访问树中的子节点
 		LinkedList<ThreadMethodStack> threadMethodStacks = threadMethodStack.getChildrenMethods();
 		if (threadMethodStacks != null && threadMethodStacks.size() > 0) {
-			for (int i = 0; i < threadMethodStacks.size(); i++) {
-				childMethodStack = merge(childMethodStack, threadMethodStacks.get(i));
+			int threadMethodStacksSize = threadMethodStacks.size();
+			for (int i = 0; i < threadMethodStacksSize; i++) {
+				childStack = merge(childStack, threadMethodStacks.get(i));
 			}
 		}
 
 		// 把处理完的childMethodStack添加到childrenMethodStack中
 		if (index > -1) {
-			childrenMethodStack.remove(index);
+			childrenStack.set(index, childStack);
+		} else {
+			childrenStack.add(childStack);
 		}
-		childrenMethodStack.add(childMethodStack);
-		methodTree.setChildrenMethodStack(childrenMethodStack);
+		methodTree.setChildrenStack(childrenStack);
 
 		// 结算自己
 		long count = 0;
 		long sumTime = 0;
+
 		AppMethodStack bak = null;
-		for (int i = 0; i < childrenMethodStack.size(); i++) {
-			bak = childrenMethodStack.get(i);
+		int childrenMethodStackSize = childrenStack.size();
+		for (int i = 0; i < childrenMethodStackSize; i++) {
+			bak = childrenStack.get(i);
 			count += bak.getCount();
 			sumTime += bak.getSum_time();
 		}
-		methodTree.setSum_time(sumTime);
+
 		methodTree.setCount(count);
+		// 如果ns位数太长，转换成ms，如果ms太长，转换成s，否则转换成m或者小时
+		methodTree.setSum_time(sumTime);
 		return methodTree;
 	}
 
@@ -200,10 +214,17 @@ public class AppMethodStack {
 		}
 	}
 
-	public static String getJson(ThreadMethodStack threadMethodStack, int depth) {
-		return "";
+	public static String getJson(AppMethodStack appStack) {
+
+		return Application.gson.toJson(appStack);
 	}
 
+	/**
+	 * 打印到控制台
+	 * 
+	 * @param appStack
+	 * @param depth
+	 */
 	public static void print(AppMethodStack appStack, int depth) {
 
 		StringBuilder s = new StringBuilder();
@@ -213,9 +234,12 @@ public class AppMethodStack {
 		System.out.println(s + appStack.getMethodName() + "---count:" + appStack.getCount() + "---sumtime:"
 				+ appStack.getSum_time() + "ns");
 
-		LinkedList<AppMethodStack> childrenMethods = appStack.getChildrenMethodStack();
-		if (childrenMethods != null && childrenMethods.size() > 0) {
-			for (AppMethodStack appStack_ : childrenMethods) {
+		List<AppMethodStack> childrenMethods = appStack.getChildrenStack();
+		int childrenMethodsSize = childrenMethods.size();
+		if (childrenMethods != null && childrenMethodsSize > 0) {
+			AppMethodStack appStack_ = null;
+			for (int i = 0; i < childrenMethodsSize; i++) {
+				appStack_ = childrenMethods.get(i);
 				print(appStack_, depth + 1);
 			}
 		}
